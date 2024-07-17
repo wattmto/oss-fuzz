@@ -1,0 +1,26 @@
+name: Merge Upstream
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: 'upstream'
+      - name: Add Upstream
+        run: |
+          git remote add upstream https://github.com/google/oss-fuzz
+      - name: Merge Upstream
+        run: |
+          git pull
+          git fetch upstream master
+          git checkout upstream
+          git merge --no-commit --ff-only upstream/master
+          git push origin upstream
